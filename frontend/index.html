@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🐍 Hand Gesture Controlled Snake Game</title>
     <link rel="stylesheet" href="style.css" />
+    <!-- Socket.IO Client Library -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 
 <body>
@@ -18,6 +20,14 @@
             <button id="startCam">🎥 Open Camera</button>
             <button id="stopCam" style="display: none;">❌ Close Camera</button>
             <video id="webcam" autoplay playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+        </div>
+
+        <!-- Gesture Display Section -->
+        <div class="gesture-section">
+            <h2>Detected Gesture:</h2>
+            <div id="gestureDisplay" class="gesture-display">None</div>
+            <div id="gestureHistory" class="gesture-history"></div>
         </div>
 
 

@@ -75,3 +75,60 @@ h1 {
 #stopCam:hover {
   background: #cc4444;
 }
+
+/* Gesture Display Section */
+.gesture-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(0, 255, 153, 0.1);
+  border-radius: 10px;
+  border: 2px solid rgba(0, 255, 153, 0.3);
+}
+
+.gesture-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #00ff99;
+}
+
+.gesture-display {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #888;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+  min-height: 60px;
+}
+
+.gesture-display.active {
+  color: #00ff99;
+  transform: scale(1.2);
+  text-shadow: 0 0 20px rgba(0, 255, 153, 0.5);
+}
+
+.gesture-history {
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.history-item {
+  padding: 8px 12px;
+  margin: 5px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.history-item .timestamp {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+#canvas {
+  display: none;
+}
