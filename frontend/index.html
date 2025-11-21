@@ -11,27 +11,60 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>🐍 Hand Gesture Controlled Snake Game</h1>
-        <p id="status">Connecting to backend...</p>
-
-        <!-- Webcam Section -->
-        <div class="webcam-section">
-            <button id="startCam">🎥 Open Camera</button>
-            <button id="stopCam" style="display: none;">❌ Close Camera</button>
-            <video id="webcam" autoplay playsinline></video>
-            <canvas id="canvas" style="display: none;"></canvas>
+    <div class="main-container">
+        <div class="header">
+            <h1>🐍 Hand Gesture Controlled Snake Game</h1>
+            <p id="status">Connecting to backend...</p>
         </div>
 
-        <!-- Gesture Display Section -->
-        <div class="gesture-section">
-            <h2>Detected Gesture:</h2>
-            <div id="gestureDisplay" class="gesture-display">None</div>
-            <div id="gestureHistory" class="gesture-history"></div>
+        <div class="content-wrapper">
+            <!-- Camera Section (Left) -->
+            <div class="camera-section">
+                <div class="webcam-section">
+                    <button id="startCam">🎥 Open Camera</button>
+                    <button id="stopCam" style="display: none;">❌ Close Camera</button>
+                    <div class="video-container">
+                        <video id="webcam" autoplay playsinline style="display: none;"></video>
+                        <canvas id="overlayCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none; display: none;"></canvas>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snake Game Section (Middle) -->
+            <div class="game-section">
+                <div class="game-controls">
+                    <button id="startGame" class="game-btn">🎮 Start Game</button>
+                    <button id="resetGame" class="game-btn" style="display: none;">🔄 Reset Game</button>
+                </div>
+                <canvas id="snakeCanvas" class="game-canvas"></canvas>
+                <div class="game-info">
+                    <p id="gameStatus" class="game-status">Ready to play! Open camera and use hand gestures to control.</p>
+                </div>
+            </div>
+
+            <!-- Sidebar (Right) - Gesture Display -->
+            <div class="sidebar">
+                <div class="gesture-section">
+                    <h2>Detected Gesture:</h2>
+                    <div id="gestureDisplay" class="gesture-display">None</div>
+                    <div id="gestureHistory" class="gesture-history"></div>
+                </div>
+                <div class="latency-section">
+                    <h3>Latency Stats</h3>
+                    <div id="latencyDisplay" class="latency-display">
+                        <p>Min: <span id="latencyMin">-</span>ms</p>
+                        <p>Max: <span id="latencyMax">-</span>ms</p>
+                        <p>Avg: <span id="latencyAvg">-</span>ms</p>
+                        <p>Count: <span id="latencyCount">0</span></p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
 
-
-        <script src="script.js"></script>
+    <script src="snake-game.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

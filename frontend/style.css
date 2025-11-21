@@ -4,34 +4,144 @@ body {
   background-color: #1a1a1a;
   color: #fff;
   font-family: "Poppins", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.container {
+.main-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.header {
   text-align: center;
+  padding: 20px;
   background: rgba(255, 255, 255, 0.05);
-  padding: 40px 60px;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(0, 255, 153, 0.3);
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 20px;
+  padding: 20px;
+  flex-wrap: wrap;
 }
 
 h1 {
   font-size: 1.8rem;
+  margin: 0;
   margin-bottom: 10px;
   color: #00ff99;
 }
 
 #status {
-  margin-top: 10px;
+  margin: 0;
   font-size: 1rem;
   color: #bbb;
 }
 
+/* Camera Section (Left) */
+.camera-section {
+  width: 100%;
+  max-width: 400px;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 153, 0.2);
+  flex-shrink: 0;
+}
+
 .webcam-section {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Game Section (Middle) */
+.game-section {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 153, 0.2);
+}
+
+.game-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.game-btn {
+  background: #00ff99;
+  color: #1a1a1a;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: 0.3s;
+  font-family: "Poppins", sans-serif;
+}
+
+.game-btn:hover {
+  background: #00cc7a;
+  transform: scale(1.05);
+}
+
+.game-btn:active {
+  transform: scale(0.95);
+}
+
+.game-canvas {
+  border: 3px solid rgba(0, 255, 153, 0.5);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 153, 0.3);
+  background: #1a1a1a;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+}
+
+.game-info {
+  text-align: center;
+}
+
+.game-status {
+  color: #bbb;
+  font-size: 0.9rem;
+  margin: 0;
+  padding: 10px;
+  background: rgba(0, 255, 153, 0.1);
+  border-radius: 5px;
+  border: 1px solid rgba(0, 255, 153, 0.3);
+}
+
+.video-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 480px;
 }
 
 #startCam {
@@ -52,11 +162,18 @@ h1 {
 
 #webcam {
   display: none;
-  width: 480px;
-  height: 360px;
-  margin-top: 20px;
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  aspect-ratio: 4/3;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+#overlayCanvas {
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
 }
 
 #stopCam {
@@ -76,28 +193,43 @@ h1 {
   background: #cc4444;
 }
 
+/* Sidebar (Right) */
+.sidebar {
+  width: 100%;
+  max-width: 320px;
+  min-width: 280px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 2px solid rgba(0, 255, 153, 0.3);
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
 /* Gesture Display Section */
 .gesture-section {
-  margin-top: 30px;
-  padding: 20px;
-  background: rgba(0, 255, 153, 0.1);
-  border-radius: 10px;
-  border: 2px solid rgba(0, 255, 153, 0.3);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .gesture-section h2 {
   font-size: 1.2rem;
   margin-bottom: 15px;
   color: #00ff99;
+  text-align: center;
 }
 
 .gesture-display {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #888;
   margin: 20px 0;
   transition: all 0.3s ease;
   min-height: 60px;
+  text-align: center;
 }
 
 .gesture-display.active {
@@ -108,7 +240,7 @@ h1 {
 
 .gesture-history {
   margin-top: 20px;
-  max-height: 200px;
+  flex: 1;
   overflow-y: auto;
   text-align: left;
 }
@@ -131,4 +263,289 @@ h1 {
 
 #canvas {
   display: none;
+}
+
+/* Latency Section */
+.latency-section {
+  margin-top: 30px;
+  padding: 15px;
+  background: rgba(0, 255, 153, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 153, 0.3);
+}
+
+.latency-section h3 {
+  font-size: 1rem;
+  margin: 0 0 10px 0;
+  color: #00ff99;
+  text-align: center;
+}
+
+.latency-display {
+  font-size: 0.85rem;
+  color: #bbb;
+}
+
+.latency-display p {
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.latency-display span {
+  color: #00ff99;
+  font-weight: bold;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ============================================ */
+
+/* Tablet and below (≤ 1024px) */
+@media screen and (max-width: 1024px) {
+  .content-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .camera-section {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .game-section {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 100%;
+    border-left: none;
+    border-top: 2px solid rgba(0, 255, 153, 0.3);
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .game-canvas {
+    max-width: 100%;
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+/* Mobile devices (≤ 768px) */
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 1.4rem;
+  }
+  
+  #status {
+    font-size: 0.9rem;
+  }
+  
+  .content-wrapper {
+    padding: 10px;
+    gap: 15px;
+  }
+  
+  .camera-section,
+  .game-section,
+  .sidebar {
+    padding: 15px;
+  }
+  
+  .game-controls {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .game-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  #startCam,
+  #stopCam {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+  }
+  
+  #stopCam {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  
+  .game-canvas {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .gesture-display {
+    font-size: 2rem;
+    min-height: 50px;
+  }
+  
+  .gesture-section h2 {
+    font-size: 1.1rem;
+  }
+  
+  .latency-section h3 {
+    font-size: 0.9rem;
+  }
+  
+  .latency-display {
+    font-size: 0.8rem;
+  }
+  
+  .game-status {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+}
+
+/* Small mobile devices (≤ 480px) */
+@media screen and (max-width: 480px) {
+  .header {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+  
+  #status {
+    font-size: 0.85rem;
+  }
+  
+  .content-wrapper {
+    padding: 8px;
+    gap: 10px;
+  }
+  
+  .camera-section,
+  .game-section,
+  .sidebar {
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  .webcam-section {
+    gap: 15px;
+  }
+  
+  .game-section {
+    gap: 10px;
+  }
+  
+  .game-btn {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  #startCam,
+  #stopCam {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .gesture-display {
+    font-size: 1.8rem;
+    margin: 15px 0;
+    min-height: 45px;
+  }
+  
+  .gesture-section h2 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .history-item {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .latency-section {
+    margin-top: 20px;
+    padding: 12px;
+  }
+  
+  .latency-section h3 {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  
+  .latency-display {
+    font-size: 0.75rem;
+  }
+  
+  .game-status {
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+}
+
+/* Landscape mobile (≤ 768px height) */
+@media screen and (max-height: 768px) and (orientation: landscape) {
+  .header {
+    padding: 10px;
+  }
+  
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  
+  #status {
+    font-size: 0.85rem;
+  }
+  
+  .content-wrapper {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .camera-section,
+  .game-section,
+  .sidebar {
+    padding: 10px;
+  }
+  
+  .game-canvas {
+    max-height: 60vh;
+    width: auto;
+  }
+  
+  .gesture-display {
+    font-size: 1.8rem;
+    margin: 10px 0;
+  }
+}
+
+/* Very large screens (≥ 1920px) */
+@media screen and (min-width: 1920px) {
+  .content-wrapper {
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+  
+  .camera-section {
+    max-width: 500px;
+  }
+  
+  .sidebar {
+    max-width: 400px;
+  }
+  
+  .game-canvas {
+    max-width: 600px;
+  }
 }
