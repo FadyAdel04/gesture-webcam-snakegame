@@ -7,3 +7,5 @@ Write-Host "🚀 Starting server with virtual environment..." -ForegroundColor G
 Set-Location $scriptPath
 & $venvPython server.py
 
+
+

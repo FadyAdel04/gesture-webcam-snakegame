@@ -32,6 +32,9 @@ class HandTracker:
         self.stable_frames = 0
         self.stable_threshold = 5  # Frames needed for stable gesture
         
+        # Previous hand position for movement tracking
+        self.previous_wrist_pos = None
+        
     def detect_gesture(self, frame):
         """
         Process frame and detect hand gesture direction
@@ -49,6 +52,7 @@ class HandTracker:
         
         direction = None
         annotated_frame = frame.copy()
+        hand_data = None
         
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
@@ -69,6 +73,15 @@ class HandTracker:
                 index_mcp = landmarks[5]  # Index finger MCP (base)
                 index_tip = landmarks[8]  # Index finger tip
                 
+                # Convert normalized coordinates to pixel coordinates
+                wrist_x = int(wrist.x * w)
+                wrist_y = int(wrist.y * h)
+                
+                # Calculate hand size for scaling lines (distance from wrist to middle finger MCP)
+                middle_mcp = landmarks[9]
+                hand_scale = ((wrist.x - middle_mcp.x)**2 + (wrist.y - middle_mcp.y)**2)**0.5
+                hand_scale_pixels = int(hand_scale * max(w, h))
+                
                 # Calculate direction vector from wrist to index tip
                 # This represents where the finger is pointing
                 dx = index_tip.x - wrist.x
@@ -76,6 +89,125 @@ class HandTracker:
                 
                 # Also check if index finger is extended (distance from MCP to tip)
                 index_length = ((index_tip.x - index_mcp.x)**2 + (index_tip.y - index_mcp.y)**2)**0.5
+                
+                # Calculate movement from previous frame (before updating)
+                movement_dx = 0
+                movement_dy = 0
+                has_previous_pos = self.previous_wrist_pos is not None
+                if has_previous_pos:
+                    movement_dx = wrist.x - self.previous_wrist_pos[0]
+                    movement_dy = wrist.y - self.previous_wrist_pos[1]
+                
+                # Draw green and red lines to show hand movement
+                # Line length scales with hand size
+                line_length = max(80, hand_scale_pixels * 3)
+                line_thickness = max(3, int(hand_scale_pixels * 0.4))
+                
+                # Always draw lines when hand is detected
+                # Horizontal line (green for right movement, red for left movement)
+                if has_previous_pos and abs(movement_dx) > 0.01:  # Significant horizontal movement
+                    if movement_dx > 0:
+                        # Moving right - green arrow line
+                        cv2.arrowedLine(
+                            annotated_frame,
+                            (wrist_x, wrist_y),
+                            (wrist_x + line_length, wrist_y),
+                            (0, 255, 0),  # Green
+                            line_thickness,
+                            tipLength=0.3
+                        )
+                    else:
+                        # Moving left - red arrow line
+                        cv2.arrowedLine(
+                            annotated_frame,
+                            (wrist_x, wrist_y),
+                            (wrist_x - line_length, wrist_y),
+                            (0, 0, 255),  # Red
+                            line_thickness,
+                            tipLength=0.3
+                        )
+                else:
+                    # No significant movement or first frame - draw neutral gray line
+                    cv2.line(
+                        annotated_frame,
+                        (wrist_x - line_length // 2, wrist_y),
+                        (wrist_x + line_length // 2, wrist_y),
+                        (128, 128, 128),  # Gray
+                        line_thickness
+                    )
+                
+                # Vertical line (green for up movement, red for down movement)
+                if has_previous_pos and abs(movement_dy) > 0.01:  # Significant vertical movement
+                    if movement_dy < 0:
+                        # Moving up - green line
+                        cv2.arrowedLine(
+                            annotated_frame,
+                            (wrist_x, wrist_y),
+                            (wrist_x, wrist_y - line_length),
+                            (0, 255, 0),  # Green
+                            line_thickness,
+                            tipLength=0.3
+                        )
+                    else:
+                        # Moving down - red line
+                        cv2.arrowedLine(
+                            annotated_frame,
+                            (wrist_x, wrist_y),
+                            (wrist_x, wrist_y + line_length),
+                            (0, 0, 255),  # Red
+                            line_thickness,
+                            tipLength=0.3
+                        )
+                else:
+                    # No significant movement or first frame - draw neutral gray line
+                    cv2.line(
+                        annotated_frame,
+                        (wrist_x, wrist_y - line_length // 2),
+                        (wrist_x, wrist_y + line_length // 2),
+                        (128, 128, 128),  # Gray
+                        line_thickness
+                    )
+                
+                # Get key joint positions for visualization
+                # Finger tips
+                thumb_tip = landmarks[4]
+                index_tip = landmarks[8]
+                middle_tip = landmarks[12]
+                ring_tip = landmarks[16]
+                pinky_tip = landmarks[20]
+                
+                # Key joints (MCP joints)
+                index_mcp = landmarks[5]
+                middle_mcp = landmarks[9]
+                ring_mcp = landmarks[13]
+                pinky_mcp = landmarks[17]
+                
+                # Store hand data for frontend overlay
+                hand_data = {
+                    'wrist_x': wrist_x,
+                    'wrist_y': wrist_y,
+                    'movement_dx': movement_dx,
+                    'movement_dy': movement_dy,
+                    'hand_scale_pixels': hand_scale_pixels,
+                    'has_previous_pos': has_previous_pos,
+                    'frame_width': w,
+                    'frame_height': h,
+                    'joints': [
+                        {'x': int(wrist.x * w), 'y': int(wrist.y * h), 'type': 'wrist'},
+                        {'x': int(thumb_tip.x * w), 'y': int(thumb_tip.y * h), 'type': 'thumb_tip'},
+                        {'x': int(index_tip.x * w), 'y': int(index_tip.y * h), 'type': 'index_tip'},
+                        {'x': int(middle_tip.x * w), 'y': int(middle_tip.y * h), 'type': 'middle_tip'},
+                        {'x': int(ring_tip.x * w), 'y': int(ring_tip.y * h), 'type': 'ring_tip'},
+                        {'x': int(pinky_tip.x * w), 'y': int(pinky_tip.y * h), 'type': 'pinky_tip'},
+                        {'x': int(index_mcp.x * w), 'y': int(index_mcp.y * h), 'type': 'mcp'},
+                        {'x': int(middle_mcp.x * w), 'y': int(middle_mcp.y * h), 'type': 'mcp'},
+                        {'x': int(ring_mcp.x * w), 'y': int(ring_mcp.y * h), 'type': 'mcp'},
+                        {'x': int(pinky_mcp.x * w), 'y': int(pinky_mcp.y * h), 'type': 'mcp'}
+                    ]
+                }
+                
+                # Update previous position after all drawing is complete
+                self.previous_wrist_pos = (wrist.x, wrist.y)
                 
                 # Only detect direction if finger is extended enough (pointing gesture)
                 if index_length > 0.08:  # Finger is extended
@@ -107,8 +239,11 @@ class HandTracker:
                         (0, 255, 0),
                         2
                     )
+        else:
+            # Reset previous position when hand is not detected
+            self.previous_wrist_pos = None
         
-        return direction, annotated_frame
+        return direction, annotated_frame, hand_data
     
     def cleanup(self):
         """Release resources"""

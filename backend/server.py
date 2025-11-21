@@ -9,6 +9,7 @@ from flask_socketio import SocketIO, emit
 import cv2
 import numpy as np
 import base64
+import time
 from hand_tracker import HandTracker
 
 app = Flask(__name__)
@@ -59,24 +60,20 @@ def handle_frame(data):
             return
         
         # Detect gesture
-        direction, annotated_frame = hand_tracker.detect_gesture(frame)
+        direction, annotated_frame, hand_data = hand_tracker.detect_gesture(frame)
         
         # Send direction command back to client
         if direction:
             emit('gesture_command', {
                 'direction': direction,
-                'status': 'success'
+                'status': 'success',
+                'timestamp': int(time.time() * 1000)  # Milliseconds timestamp
             })
             print(f"📤 Sent gesture command: {direction}")
         
-        # Optionally send annotated frame back (for debugging/visualization)
-        # Encode annotated frame to base64
-        _, buffer = cv2.imencode('.jpg', annotated_frame)
-        frame_base64 = base64.b64encode(buffer).decode('utf-8')
-        
-        emit('annotated_frame', {
-            'image': f'data:image/jpeg;base64,{frame_base64}'
-        })
+        # Send hand position data for overlay drawing
+        if hand_data:
+            emit('hand_data', hand_data)
         
     except Exception as e:
         print(f"❌ Error processing frame: {str(e)}")
